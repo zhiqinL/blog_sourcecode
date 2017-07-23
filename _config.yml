@@ -76,6 +76,7 @@ theme: next
 
 plugin:
 - hexo-generator-feed
+- hexo-generator-search
 #Feed Atom
 feed:
 type: atom
@@ -90,8 +91,3 @@ deploy:
   branch: master
   message: "{{ now('YYYY-MM-DD HH:mm:ss') }}"
 
-search:
-  path: search.xml
-  field: post
-  format: html
-  limit: 10000
