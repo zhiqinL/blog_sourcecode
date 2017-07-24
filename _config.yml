@@ -12,7 +12,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://zhiqinl.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -79,9 +79,12 @@ plugin:
 - hexo-generator-search
 #Feed Atom
 feed:
-type: atom
-path: atom.xml
-limit: 20
+  type: atom
+  path: atom.xml
+  limit: 20
+
+sitemap:
+  path: sitemap.xml
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
