@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title><![CDATA[Binary Tree Traversal]]></title>
+    <url>%2F2017%2F08%2F24%2Ftree-traversal%2F</url>
+    <content type="text"><![CDATA[树的遍历二叉树的遍历是算法问题中一个特别基础的问题，主要分为三种，前序，中序和后序，不同的遍历方法会将树的节点以不同的顺序输出，这篇文章主要用来记录二叉树三种遍历具体的代码实现。 前序遍历: 1-245-3 (根 - 左 - 右)中序遍历: 425-1-3 (左 - 根 - 右)后序遍历: 452-3-1 (左 - 右 - 根) 二叉树的定义要用代码实现二叉树的遍历，首先要用代码来定义一个二叉树，具体就是定义一个树的节点类 TreeNode 最基本的树的节点包括了值，左子树和右子树等属性，有一些更复杂的也会包含自己的父节点和左右的同辈节点等。 1234567891011121314class TreeNode &#123; TreeNode left, right; int value; TreeNode(int value) &#123; this.value = value; &#125; TreeNode(int value, TreeNode left, TreeNode right) &#123; this.value = value; this.left = left; this.right = right; &#125;&#125; 前序遍历前序遍历是整个二叉树遍历中用非递归代码来实现相对比较容易的一种，其遍历顺序是先访问当前节点，再左子树节点，最后是右子树节点，所以顺序是: 跟 -&gt; 左子节点 -&gt; 右子节点，前序遍历其实就是DFS，具体的代码实现如下： 递归实现 1234567public void preorderTraversal(TreeNode node, List&lt;Integer&gt; nodes) &#123; if(node != null) &#123; nodes.add(node.value); preorderTraversal(node.left, nodes); preorderTraversal(node.right, nodes); &#125;&#125; 非递归实现 123456789101112131415161718public List&lt;Integer&gt; preorderTraversal(TreeNode node) &#123; Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;(); List&lt;Integer&gt; nodes = new ArrayList&lt;&gt;(); stack.push(node); while(!stack.isEmpty()) &#123; TreeNode curt = stack.pop(); nodes.add(curt.value); if(curt.right != null) stack.push(curt.right); if(curt.left != null) stack.push(curt.left); &#125; return nodes;&#125; 中序遍历中序遍历的顺序是先遍历左子树节点，再遍历当前节点最后遍历右子树节点，所以顺序是: 左子节点 -&gt; 根 -&gt; 右子节点，在二叉搜索树中，因为左子树节点小于当前节点，而右子节点大于等于当前节点，所以中序遍历能够按照升序将树中的节点输出，具体的代码实现如下: 递归实现 1234567public void inorderTraversal(TreeNode, List&lt;Integer&gt; nodes) &#123; if(node != null) &#123; inorderTraversal(node.left, nodes); nodes.add(node.value); inorderTraversal(node.right, nodes); &#125;&#125; 非递归实现 12345678910111213141516public void inorderTraversal(TreeNode node) &#123; Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;(); List&lt;Integer&gt; nodes = new ArrayList&lt;&gt;(); TreeNode curt = node; while(curt != null || stack.isEmpty()) &#123; while(curt != null) &#123; stack.push(curt); curt = curt.left; &#125; curt = stack.pop(); nodes.add(curt.value); curt = curt.right; &#125; return nodes;&#125; 后序遍历后序遍历的顺序是先遍历左子节点，再遍历右子节点，最后遍历当前节点。所以顺序是: 左子节点 -&gt; 右子节点 -&gt; 根，具体代码实现如下: 递归实现 1234567public void postorderTraversal(TreeNode node, List&lt;Integer&gt; nodes) &#123; if(node =! null) &#123; postorderTraversal(node.left, nodes); postorderTraversal(node.right, nodes); nodes.add(node.value); &#125;&#125; 非递归实现 123456789101112131415161718192021222324public List&lt;Integer&gt; postorderTraversal(TreeNode node) &#123; Stack&lt;TreeNode&gt; stack = new Stack&lt;&gt;(); List&lt;Integer&gt; nodes = new ArrayList&lt;&gt;(); TreeNode prev = null; stack.push(node); while(!stack.isEmpty()) &#123; TreeNode curt = stack.peek(); if(prev == null || prev.left == curt || prev.right == curt) &#123; if(curt.left != null) stack.push(curt.left); else if(curt.right != null) stack.push(curt.right); &#125; else if(curt.left == prev) &#123; if(curt.right != null) stack.push(curt.right); &#125; else &#123; nodes.add(curt.value); stack.pop(); &#125; prev = curt; &#125; return nodes;&#125;]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>binary tree</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[快速排序 & 归并排序小记]]></title>
+    <url>%2F2017%2F08%2F15%2Fsort%2F</url>
+    <content type="text"><![CDATA[排序是在学习算法和编程中最基础的一部分，而快速排序和归并排序又是这其中使用最普遍的两种排序方式，具体两种排序的实现原理网上有大量的讲解，这里只记录一些具体的代码实现，方便自己忘记的时候进行查阅。 快速排序(Quick Sort)时间复杂度: 平均: O(NlogN) 最优: O(N) 最差: O(N^2)空间复杂度: O(logN) (因为递归调用，所以是O(logN)不是O(1)) 方法一: 123456789101112131415161718192021public void quickSort(int[] nums, int left, int right) &#123; int i = left, j = right, key = nums[right]; while(i &lt; j) &#123; while(i &lt; j &amp;&amp; nums[i] &lt; key) i++; nums[j] = nums[i]; while(i &lt; j &amp;&amp; nums[j] &gt;= key) j--; nums[i] = nums[j]; &#125; nums[i] = key; if(i - 1 &gt; left) quickSort(nums, left, i - 1); if(i + 1 &lt; right) quickSort(nums, i + 1, right);&#125; 方法二: 12345678910111213141516171819202122232425public void quickSort(int[] nums, int left, int right) &#123; int i = left, j = right, mid = (right - left) / 2 + left; int key = nums[mid]; while(i &lt;= j) &#123; while(nums[i] &lt; key) i++; while(nums[j] &gt; key) j--; if(i &lt;= j) &#123; int temp = nums[i]; nums[i] = nums[j]; nums[j] = temp; i++; j--; &#125; &#125; if(j &gt; left) quickSort(nums, left, j); if(i &lt; right) quickSort(nums, i, right); &#125; 注意，在方法二中，从right往左遍历的时候，不能考虑 nums[j] == key 的情况，否则有可能会出现数组左边都是大于 key 右边都是等于 key 的情况，这时排序就无法继续进行。 归并排序(Merge Sort)时间复杂度: 平均: O(NlogN) 最优: O(NlogN) 最差: O(NlogN)空间复杂度: O(N) 1234567891011121314151617181920212223242526272829private void mergeSort(int[] nums, int left, int right) &#123; if(left &gt;= right) return; int mid = (right - left) / 2 + left; mergeSort(nums, left, mid); mergeSort(nums, mid + 1, right); mergeArray(nums, left, mid, right);&#125;private void mergeArray(int[] nums, int start, int mid, int end) &#123; int i = start, j = mid + 1, index = 0; int[] temp = new int[end - start + 1]; while(i &lt;= mid &amp;&amp; j &lt;= end) &#123; if(nums[i] &lt; nums[j]) temp[index++] = nums[i++]; else temp[index++] = nums[j++]; &#125; while(i &lt;= mid) temp[index++] = nums[i++]; while(j &lt;= end) temp[index++] = nums[j++]; for(int x = 0; x &lt; index; x++) nums[x + start] = temp[x];&#125;]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>leetcode</tag>
+        <tag>sort</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[KMP字符串匹配算法]]></title>
+    <url>%2F2017%2F08%2F13%2Fkmp-algorithm%2F</url>
+    <content type="text"><![CDATA[字符串匹配字符串匹配是算法题中常考的一个类型，而且通常会在更复杂的题目中和其他类型的问题搭配出现。举例来说，有一个字符串”BBC ABCDAB ABCDABCDABDE”，来检测这其中是否含有另一个字符串”ABCDABD”就是字符串的匹配问题。 Brust Force原字符串: “BBC ABCDAB ABCDABCDABDE” 长度: m匹配字符串: “ABCDABD” 长度: n时间复杂度为: O(mn)假设原字符串和匹配字符串的长度分别为m和n，暴力解法brust force通常是从第一个字符开始检测，如果遇到不匹配，则将用于匹配的字符向后移动一位，再继续从头开始匹配，直到找到完全匹配的位置或遍历完整个字符串，时间复杂度为mn。 KMP原字符串: “BBC ABCDAB ABCDABCDABDE” 长度: m匹配字符串: “ABCDABD” 长度: n时间复杂度为: O(m + n)与暴力解法不同，KMP在遇到不匹配的部位时，不是直接向后移动一位，而是根据一个部分匹配值表，来确定移动的位置，具体算法步骤如下: 具体步骤1.123BBC ABCDAB ABCDABCDABDE|ABCDABD 首先，字符串”BBC ABCDAB ABCDABCDABDE”的第一个字符与搜索词”ABCDABD”的第一个字符，进行比较。因为B与A不匹配，所以搜索词后移一位。 2.123BBC ABCDAB ABCDABCDABDE | ABCDABD 因为B与A不匹配，搜索词再往后移。 3.123BBC ABCDAB ABCDABCDABDE | ABCDABD 就这样，直到字符串有一个字符，与搜索词的第一个字符相同为止。 4.123BBC ABCDAB ABCDABCDABDE | ABCDABD 接着比较字符串和搜索词的下一个字符，还是相同。 5.123BBC ABCDAB ABCDABCDABDE | ABCDABD 直到字符串有一个字符，与搜索词对应的字符不相同为止。一个基本事实是，当空格与D不匹配时，你其实知道前面六个字符是”ABCDAB”。KMP算法的想法是，设法利用这个已知信息，不要把”搜索位置”移回已经比较过的位置，继续把它向后移，这样就提高了效率。 6.上诉所说的已知信息指的就是部分匹配值: 搜索词 A B C D A B D 部分匹配值 0 0 0 0 1 2 0 部分匹配值具体如何计算下面会讲到。 7.123BBC ABCDAB ABCDABCDABDE | ABCDABD 当空格与D不匹配时，查表可以最后一个匹配字符B对应的部分匹配值为2，因此可以按照下面的公式计算出匹配字符串应该向后移动的位数:移动位数 = 已匹配字符数 - 对应的部分匹配值因此在这个例子里，应该讲匹配字符串向后移动 6 - 2 = 4 位。 8.123BBC ABCDAB ABCDABCDABDE | ABCDABD 因为空格与Ｃ不匹配，搜索词还要继续往后移。这时，已匹配的字符数为2（”AB”），对应的”部分匹配值”为0。所以，移动位数 = 2 - 0，结果为 2，于是将搜索词向后移2位。 9.123BBC ABCDAB ABCDABCDABDE | ABCDABD 因为空格与A不匹配，继续后移一位。 10.123BBC ABCDAB ABCDABCDABDE | ABCDABD 逐位比较，直到发现C与D不匹配。于是，移动位数 = 6 - 2，继续将搜索词向后移动4位。 11.123BBC ABCDAB ABCDABCDABDE ABCDABD 逐位比较，直到搜索词的最后一位，发现完全匹配，于是搜索完成。如果还要继续搜索（即找出全部匹配），移动位数 = 7 - 0，再将搜索词向后移动7位，这里就不再重复了。 部分匹配值 搜索词 A B C D A B D 部分匹配值 0 0 0 0 1 2 0 部分匹配值 就是 前缀 和 后缀 的最长的共有元素的长度。以”ABCDABD”为例， 1234567&quot;A&quot; 的前缀和后缀都为空集，共有元素的长度为0；&quot;AB&quot; 的前缀为[A]，后缀为[B]，共有元素的长度为0；&quot;ABC&quot; 的前缀为[A, AB]，后缀为[BC, C]，共有元素的长度0；&quot;ABCD&quot; 的前缀为[A, AB, ABC]，后缀为[BCD, CD, D]，共有元素的长度为0；&quot;ABCDA&quot; 的前缀为[A, AB, ABC, ABCD]，后缀为[BCDA, CDA, DA, A]，共有元素为&quot;A&quot;，长度为1；&quot;ABCDAB&quot; 的前缀为[A, AB, ABC, ABCD, ABCDA]，后缀为[BCDAB, CDAB, DAB, AB, B]，共有元素为&quot;AB&quot;，长度为2；&quot;ABCDABD&quot; 的前缀为[A, AB, ABC, ABCD, ABCDA, ABCDAB]，后缀为[BCDABD, CDABD, DABD, ABD, BD, D]，共有元素的长度为0。 代码实现Leetcode 28题问题描述: 12Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack. 部分匹配值的算法实现： 1234567891011121314151617181920private int[] generateNext(String needle) &#123; int[] next = new int[needle.length()]; char[] chs = needle.toCharArray(); int i = 0, j = 1; while(j &lt; chs.length) &#123; if(chs[i] == chs[j]) &#123; next[j] = i + 1; i++; j++; &#125; else &#123; if(i == 0) &#123; next[j] = 0; j++; &#125; else &#123; i = next[i - 1]; &#125; &#125; &#125; return next;&#125; 给定一个字符串，通过以上代码可以得出该字符串相应的部分匹配值数组 next。 字符串匹配 1234567891011121314151617181920public int strStr(String haystack, String needle) &#123; if(haystack.length() &lt; needle.length()) return -1; int i = 0, j = 0; int[] next = generateNext(needle); char[] h_chs = haystack.toCharArray(), n_chs = needle.toCharArray(); while(i &lt; h_chs.length &amp;&amp; j &lt; n_chs.length) &#123; if(h_chs[i] == n_chs[j]) &#123; i++; j++; &#125; else &#123; if(j == 0) &#123; i++; &#125; else &#123; j = next[j - 1]; &#125; &#125; &#125; return j == n_chs.length? i - n_chs.length : -1;&#125; 根据之前计算出的部分匹配值数组 next，可以通过如上代码计算出匹配字符串 needle 在原字符串 haystack 中相应的匹配位置。 相关Leetcode题目Leetcode: 28. Implement strStr()Leetcode: 459. Repeated Substring Pattern 相关参考 字符串匹配的KMP算法]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>kmp</tag>
+        <tag>leetcode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[记一次Macbook Pro的换屏经历]]></title>
+    <url>%2F2017%2F07%2F31%2Freplace-screen%2F</url>
+    <content type="text"><![CDATA[换屏动机用Macbook Pro的小伙伴们肯定或多或少的都听说过Macbook retain屏幕的镀膜图层脱落的问题，本人手中的15寸的pro小老婆也无可避免的遇到了这个问题，一小片一小片脱落的图层在整个屏幕上显得十分的丑陋并且影响观感，然而我实在是懒得不行一直不愿意去管，直到最近开始发现已经有点影响到正常的屏幕显示了，实在受不了了就Google了一下这个问题，发现在国内竟然也可以免费换屏，那这就没啥说的了，果断换之。 PS. 根据店员的说法，每一个购买了Macbook的用户，如果出现了屏幕上镀层脱落的问题，不管严重与否，都是可以进行一次免费换屏的服务的，我自己的屏幕除了镀膜脱落的问题外，也有错位的问题，但是也无偿享受了免费的换屏服务，所以也有同样问题的小伙伴，都可以考虑去换一个新的屏幕。 事前预约某天本人打电话给苹果的售后 400-666-8800 询问了一下具体苹果关于处理镀层脱落的政策，确认了可以无偿的免费换屏，但是对于具体不同的维修点或者直营店，可能会存在不同的服务费，这个需要具体看直营店或者维修点的情况，接下来就是要去预约维修点或直营店和具体的时间了。预约可以打电话给客服直接在电话里让他帮你预约，也可以登陆apple的官网自己手动预约，本着自己的事情自己做的原则，我当然是在官网自己预约的，具体流程如下: 首先登陆Apple的中国官网，并点击进入 技术支持: 之后再页面中下滑，找到 ”您需要哪方面帮助？“ 并点击 获得支持 按钮: 之后选择自己的设备，因为是电脑换屏，所以我这里选择的是 Mac: 然后会出现如下图的选项来选择需要处理哪部分的问题，这里我选择 Hardware Issues: 最后选择 Bring in for Repair 然后用自己的apple ID登陆，就可以选择直营店和时间进行预约了: 预约维修需要提供本人的身份证，所以到店维修和取的时候都需要记得带上自己的身份证，我去去电脑的时候就见到一个人帮他老婆取修的手机，带了老婆的身份证没带自己的身份证店员不让她取的尴尬事情。 PS.可以维修苹果设备的地方分为直营店和苹果的授权维修点两种，顾名思义前一种是Apple直接开设管理的集销售，维修，售后为一身的店铺，通常开设在大城市的商业中心，后一种说的难听点就是普通的修电脑的电脑城，只不过拿到了苹果的授权可以专业的来维修苹果的设备。我这里建议，对于比较严重的或者说需要给设备更换零件的问题，还是去苹果的直营店比较保险，随便Google一下可以看到很多授权维修点坑客户的事件，所以为了自己设备的安全，这里建议大家去苹果直营店比较保险。 到店维修预约成功后，提前预约的时间10分钟左右到店找到专门负责售后的店员，店员会安排专门的工程师来处理用户的问题。我预约的是北京王府井的Apple store apm店，不得不说，周末再加上是王府井，当天下午的人可真的是不少。工程师见到我的电脑，感慨了一下从来没见过像我这样图层脱落的情况，然后测试了一下电脑的其他性能(电池，硬盘，CPU)什么的，就安排免费的屏幕更换了，连服务费都免了！这里我要点10个赞！然后打了一张维修单，等着短信，电话或者邮件通知再来凭维修单和身份证取机器就行了。 换屏完成苹果的售后维修一般是48小时之内完成的，由于我周一要用电脑，就给加急了，当天晚上10点接到工程师的电话(看来当苹果的硬件工程师也得加班到很晚)，说是屏幕换完了，还顺便帮清了个灰让第二天去取。第二天一早就爬起来又跑到王府井去取电脑(住在西二旗连续两天花3个小时往返王府井也是累的不行)，拿到电脑看到换好屏幕的pro小老婆，对比之前那块脏兮兮的屏幕，感觉自己处女座强迫症被极大的满足了，又可以继续愉快的敲代码了！ 来晒一下换好屏幕的以后的效果:]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>搞机</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Markdown语法小记]]></title>
+    <url>%2F2017%2F07%2F25%2Fmarkdown-record%2F</url>
+    <content type="text"><![CDATA[在真正写博客之前虽有对Markdown有所了解，但是从来没有仔细学习过它的各种语法，仔细想想刚开始部署GitHub的时候，还对readme的md后缀懵逼过，十分的惭愧，所以现在准备好好记录一下. 基础语法文字标题Markdonw中有两种定义标题的方式，第一种是利用 = (最高阶标题) 和- (第二阶标题)在文字下方加入底线的形式，第二种是在行首加入1到6个 #，对应标题从第一阶到第六阶. 加底线的标题最高阶标题 12这是最高阶标题 ============ 第二阶标题 12这是第二阶标题------------ 加 # 的标题123# 这是一阶标题###### 这是六阶标题 换行与分割线换行刚开始使用Markdown时，很多小伙伴可能会对换行有一些迷惑(其实就是我自己)，每次都要在两行之间空一行，但其实Markdown的换行只需要在上一行的末尾加上两个空格，再回车，就能够换行了. 分隔线Markdown中可以使用 *** 或者 ---来产生分隔线，效果如下: 注意，因为 --- 也可以用来产生二级标题，所以，用 --- 产生分隔线时，需要与上一行文字隔一行. 加粗与斜体Markdown中实现文字的加粗与斜体也是非常的简单，用两个 * 包裹文字就能实现加粗，用一个 * 包裹文字，就能实现斜体. 123**这里会加粗***这里会斜体* 列表Markdown中无序列表可以通过在文字前加上 * - 或 + 中任意一个和空格实现，在文字前加上数字，点和空格(例如1.)就能实现有序列表. 123456* 无序列表1- 无序列表2+ 无序列表31. 有序列表12. 有序列表2 图片与链接都需要加入URL的图片和链接在Markdown中的实现方式比较类似: 图片:123![Alt text](/path/to/img.jpg)or![Alt text](/path/to/img.jpg &quot;Optional title&quot;) 方括号 [] 中为图片加载不出来时的替代文字，() 中第一项为图片的地址，第二项可选择性的加或者不加，其内容是图片的title. 链接:1[text](/path/to/page) [] 中放入链接文字，()中则为具体的url. 表格表格的格式如下: 12345| col1 | col2 | col3 || :--------- |:----------:| ----------:|| row1 col1 | row1 col2 | row1 col3 || row2 col1 | row2 col2 | row2 col3 || row3 col1 | row3 col2 | row3 col3 | 效果则为: col1 col2 col3 row1 col1 row1 col2 row1 col3 row2 col1 row2 col2 row2 col3 row3 col1 row3 col2 row3 col3 引用在文字前加上 &gt; 即可加入一段引用 这是一段引用 如果需要加入很多行引用，则需要在每行前都加上 &gt; 这是多行引用 代码块对于程序员来说，如何优雅在文本中加入代码块是一件很重(zhuang)要(B)的事情，在Markdown中加入代码块有多种方式: 缩进4个空格或者1个制表符(tab键) 1前面加四个空格或者一个tab就可以形成代码块 在列表行下使用此种方法时则需要缩进两次，所以为了使用方便和文字的区域性更加明显，不是很推荐这种方法来产生代码块. 单行的代码用两个 ` 符号包裹 1`被包裹的单行代码块` 多行的代码则用分别用三个 ` 将整段代码包裹，同时用此种方法加上不同的语言名字还可以为不同的程序语言设置不同的代码高亮，完美的解决了程序员的这一刚性需求 1234\``` pythondef function(): print('这里是多行代码')\``` (因为是特殊符号，所以在展示时加入了一个 \ 取消符号的特殊含义方便展示，在实际使用时无需加上反斜杠) 其他语法兼容HTML在Markdown中可以使用HTML的标签元素来对文字进行进一步的修改，例如Markdown中的文字大小一般是无法进行直接修改的，通过HTML标签或者直接修改CSS文件就可以做到修改Markdown文件中文字的大小颜色等属性. 我变大了也变红了 代码如下: 1&lt;span style="font-size: 20px;color: red"&gt;我变大了也变红了&lt;/span&gt; 但是这些修改违背了Markdown让文档更容易读，写和改的意愿，所以一般不建议如此书写. 特殊字符自动转换在 HTML 文件中，有两个字符需要特殊处理: &lt; 和 &amp; . &lt; 符号用于起始标签，&amp; 符号则用于标记 HTML 实体，如果你只是想要显示这些字符的原型，你必须要使用实体的形式，像是 &lt; 和 &amp;. &amp; 字符尤其让网络文档编写者受折磨，如果你要打「AT&amp;T」 ，你必须要写成「AT&amp;T」。而网址中的 &amp; 字符也要转换。比如你要链接到： 1http://images.google.com/images?num=30&amp;q=larry+bird 你必须要把网址转换写为： 1http://images.google.com/images?num=30&amp;amp;q=larry+bird 才能放到链接标签的 href 属性里. 反斜杠取消符号特殊含义Markdown 可以利用反斜杠来插入一些在语法中有其它意义的符号，例如: \*我不会变斜\* 参考资料 Markdown——入门指南 Markdown 语法说明]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>markdown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Hello World]]></title>
+    <url>%2F2017%2F07%2F23%2Fhello-world%2F</url>
+    <content type="text"><![CDATA[程序员的开场白12345def start(): print('Hello World')if __name__ == '__main__': start() 我的个人博客上线了，主要用于记录自己时不时的一些小想法和学习技术中遇到的一些问题.]]></content>
+      <categories>
+        <category>生活</category>
+      </categories>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
+  </entry>
+</search>

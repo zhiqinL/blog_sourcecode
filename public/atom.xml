@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Zhiqin&#39;s Notes</title>
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="https://zhiqinl.github.io/"/>
+  <updated>2017-08-24T08:41:29.000Z</updated>
+  <id>https://zhiqinl.github.io/</id>
+  
+  <author>
+    <name>Zhiqin Liao</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Binary Tree Traversal</title>
+    <link href="https://zhiqinl.github.io/2017/08/24/tree-traversal/"/>
+    <id>https://zhiqinl.github.io/2017/08/24/tree-traversal/</id>
+    <published>2017-08-24T22:11:29.000Z</published>
+    <updated>2017-08-24T08:41:29.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="树的遍历"><a href="#树的遍历" class="headerlink" title="树的遍历"></a>树的遍历</h3><p>二叉树的遍历是算法问题中一个特别基础的问题，主要分为三种，前序，中序和后序，不同的遍历方法会将树的节点以不同的顺序输出，这篇文章主要用来记录二叉树三种遍历具体的代码实现。</p>
+<a id="more"></a>
+<p><img src="/uploads/tree_traverse/binary_tree.png" width="30%"></p>
+<p>前序遍历: 1-245-3 (根 - 左 - 右)<br>中序遍历: 425-1-3 (左 - 根 - 右)<br>后序遍历: 452-3-1 (左 - 右 - 根)</p>
+<h4 id="二叉树的定义"><a href="#二叉树的定义" class="headerlink" title="二叉树的定义"></a>二叉树的定义</h4><p>要用代码实现二叉树的遍历，首先要用代码来定义一个二叉树，具体就是定义一个树的节点类 <code>TreeNode</code> 最基本的树的节点包括了值，左子树和右子树等属性，有一些更复杂的也会包含自己的父节点和左右的同辈节点等。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">TreeNode</span> </span>&#123;</div><div class="line">	TreeNode left, right;</div><div class="line">	<span class="keyword">int</span> value;</div><div class="line">	</div><div class="line">	TreeNode(<span class="keyword">int</span> value) &#123;</div><div class="line">		<span class="keyword">this</span>.value = value;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	TreeNode(<span class="keyword">int</span> value, TreeNode left, TreeNode right) &#123;</div><div class="line">		<span class="keyword">this</span>.value = value;</div><div class="line">		<span class="keyword">this</span>.left = left;</div><div class="line">		<span class="keyword">this</span>.right = right;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="前序遍历"><a href="#前序遍历" class="headerlink" title="前序遍历"></a>前序遍历</h4><p>前序遍历是整个二叉树遍历中用非递归代码来实现相对比较容易的一种，其遍历顺序是先访问当前节点，再左子树节点，最后是右子树节点，所以顺序是: <code>跟 -&gt; 左子节点 -&gt; 右子节点</code>，前序遍历其实就是<strong>DFS</strong>，具体的代码实现如下：</p>
+<ul>
+<li>递归实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">preorderTraversal</span><span class="params">(TreeNode node, List&lt;Integer&gt; nodes)</span> </span>&#123;</div><div class="line">	<span class="keyword">if</span>(node != <span class="keyword">null</span>) &#123;</div><div class="line">		nodes.add(node.value);</div><div class="line">		preorderTraversal(node.left, nodes);</div><div class="line">		preorderTraversal(node.right, nodes);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>非递归实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">preorderTraversal</span><span class="params">(TreeNode node)</span> </span>&#123;</div><div class="line">	Stack&lt;TreeNode&gt; stack = <span class="keyword">new</span> Stack&lt;&gt;();</div><div class="line">	List&lt;Integer&gt; nodes = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">	stack.push(node);</div><div class="line">	</div><div class="line">	<span class="keyword">while</span>(!stack.isEmpty()) &#123;</div><div class="line">		TreeNode curt = stack.pop();</div><div class="line">		nodes.add(curt.value);</div><div class="line">		</div><div class="line">		<span class="keyword">if</span>(curt.right != <span class="keyword">null</span>)</div><div class="line">			stack.push(curt.right);</div><div class="line">			</div><div class="line">		<span class="keyword">if</span>(curt.left != <span class="keyword">null</span>)</div><div class="line">			stack.push(curt.left);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">return</span> nodes;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="中序遍历"><a href="#中序遍历" class="headerlink" title="中序遍历"></a>中序遍历</h4><p>中序遍历的顺序是先遍历左子树节点，再遍历当前节点最后遍历右子树节点，所以顺序是: <code>左子节点 -&gt; 根 -&gt; 右子节点</code>，在二叉搜索树中，<strong>因为左子树节点小于当前节点，而右子节点大于等于当前节点，所以中序遍历能够按照升序将树中的节点输出</strong>，具体的代码实现如下:</p>
+<ul>
+<li>递归实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">inorderTraversal</span><span class="params">(TreeNode, List&lt;Integer&gt; nodes)</span> </span>&#123;</div><div class="line">	<span class="keyword">if</span>(node != <span class="keyword">null</span>) &#123;</div><div class="line">		inorderTraversal(node.left, nodes);</div><div class="line">		nodes.add(node.value);</div><div class="line">		inorderTraversal(node.right, nodes);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>非递归实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">inorderTraversal</span><span class="params">(TreeNode node)</span> </span>&#123;</div><div class="line">	Stack&lt;TreeNode&gt; stack = <span class="keyword">new</span> Stack&lt;&gt;();</div><div class="line">	List&lt;Integer&gt; nodes = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">	TreeNode curt = node;</div><div class="line">	</div><div class="line">	<span class="keyword">while</span>(curt != <span class="keyword">null</span> || stack.isEmpty()) &#123;</div><div class="line">		<span class="keyword">while</span>(curt != <span class="keyword">null</span>) &#123;</div><div class="line">			stack.push(curt);</div><div class="line">			curt = curt.left;</div><div class="line">		&#125;</div><div class="line">		curt = stack.pop();</div><div class="line">		nodes.add(curt.value);</div><div class="line">		curt = curt.right;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> nodes;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="后序遍历"><a href="#后序遍历" class="headerlink" title="后序遍历"></a>后序遍历</h4><p>后序遍历的顺序是先遍历左子节点，再遍历右子节点，最后遍历当前节点。所以顺序是: <code>左子节点 -&gt; 右子节点 -&gt; 根</code>，具体代码实现如下:</p>
+<ul>
+<li>递归实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postorderTraversal</span><span class="params">(TreeNode node, List&lt;Integer&gt; nodes)</span> </span>&#123;</div><div class="line">	<span class="keyword">if</span>(node =! <span class="keyword">null</span>) &#123;</div><div class="line">		postorderTraversal(node.left, nodes);</div><div class="line">		postorderTraversal(node.right, nodes);</div><div class="line">		nodes.add(node.value);</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>非递归实现</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> List&lt;Integer&gt; <span class="title">postorderTraversal</span><span class="params">(TreeNode node)</span> </span>&#123;</div><div class="line">	Stack&lt;TreeNode&gt; stack = <span class="keyword">new</span> Stack&lt;&gt;();</div><div class="line">	List&lt;Integer&gt; nodes = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">	TreeNode prev = <span class="keyword">null</span>;</div><div class="line">	</div><div class="line">	stack.push(node);</div><div class="line">	<span class="keyword">while</span>(!stack.isEmpty()) &#123;</div><div class="line">		TreeNode curt = stack.peek();</div><div class="line">		<span class="keyword">if</span>(prev == <span class="keyword">null</span> || prev.left == curt || prev.right == curt) &#123;</div><div class="line">			<span class="keyword">if</span>(curt.left != <span class="keyword">null</span>) </div><div class="line">				stack.push(curt.left);</div><div class="line">			<span class="keyword">else</span> <span class="keyword">if</span>(curt.right != <span class="keyword">null</span>)</div><div class="line">				stack.push(curt.right);</div><div class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span>(curt.left == prev) &#123;</div><div class="line">			<span class="keyword">if</span>(curt.right != <span class="keyword">null</span>)</div><div class="line">				stack.push(curt.right);</div><div class="line">		&#125; <span class="keyword">else</span> &#123;</div><div class="line">			nodes.add(curt.value);</div><div class="line">			stack.pop();</div><div class="line">		&#125;</div><div class="line">		prev = curt;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> nodes;</div><div class="line">&#125;</div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;树的遍历&quot;&gt;&lt;a href=&quot;#树的遍历&quot; class=&quot;headerlink&quot; title=&quot;树的遍历&quot;&gt;&lt;/a&gt;树的遍历&lt;/h3&gt;&lt;p&gt;二叉树的遍历是算法问题中一个特别基础的问题，主要分为三种，前序，中序和后序，不同的遍历方法会将树的节点以不同的顺序输出，这篇文章主要用来记录二叉树三种遍历具体的代码实现。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="技术" scheme="https://zhiqinl.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="leetcode" scheme="https://zhiqinl.github.io/tags/leetcode/"/>
+    
+      <category term="binary tree" scheme="https://zhiqinl.github.io/tags/binary-tree/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>快速排序 &amp; 归并排序小记</title>
+    <link href="https://zhiqinl.github.io/2017/08/15/sort/"/>
+    <id>https://zhiqinl.github.io/2017/08/15/sort/</id>
+    <published>2017-08-15T22:54:29.000Z</published>
+    <updated>2017-08-15T08:40:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>排序是在学习算法和编程中最基础的一部分，而快速排序和归并排序又是这其中使用最普遍的两种排序方式，具体两种排序的实现原理网上有大量的讲解，这里只记录一些具体的代码实现，方便自己忘记的时候进行查阅。</p>
+<a id="more"></a>
+<h3 id="快速排序-Quick-Sort"><a href="#快速排序-Quick-Sort" class="headerlink" title="快速排序(Quick Sort)"></a>快速排序(Quick Sort)</h3><p><strong>时间复杂度:</strong> 平均: O(N<strong><em>log</em></strong>N)  最优: O(N)  最差: O(N^2)<br><strong>空间复杂度:</strong> O(logN) (因为递归调用，所以是O(logN)不是O(1))</p>
+<ul>
+<li>方法一:  </li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> i = left, j = right, key = nums[right];</div><div class="line">    <span class="keyword">while</span>(i &lt; j) &#123;</div><div class="line">        <span class="keyword">while</span>(i &lt; j &amp;&amp; nums[i] &lt; key)</div><div class="line">            i++;</div><div class="line"></div><div class="line">        nums[j] = nums[i];</div><div class="line"></div><div class="line">        <span class="keyword">while</span>(i &lt; j &amp;&amp; nums[j] &gt;= key)</div><div class="line">            j--;</div><div class="line"></div><div class="line">        nums[i] = nums[j];</div><div class="line">    &#125;</div><div class="line">    nums[i] = key;</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(i - <span class="number">1</span> &gt; left)</div><div class="line">        quickSort(nums, left, i - <span class="number">1</span>);</div><div class="line"></div><div class="line">    <span class="keyword">if</span>(i + <span class="number">1</span> &lt; right)</div><div class="line">        quickSort(nums, i + <span class="number">1</span>, right);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>方法二:</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">quickSort</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> i = left, j = right, mid = (right - left) / <span class="number">2</span> + left;</div><div class="line">    <span class="keyword">int</span> key = nums[mid];</div><div class="line">    <span class="keyword">while</span>(i &lt;= j) &#123;</div><div class="line">        <span class="keyword">while</span>(nums[i] &lt; key)</div><div class="line">            i++;</div><div class="line">    		</div><div class="line">        <span class="keyword">while</span>(nums[j] &gt; key)</div><div class="line">            j--;</div><div class="line"></div><div class="line">    	<span class="keyword">if</span>(i &lt;= j) &#123;</div><div class="line">            <span class="keyword">int</span> temp = nums[i];</div><div class="line">            nums[i] = nums[j];</div><div class="line">            nums[j] = temp;</div><div class="line">            i++;</div><div class="line">            j--;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span>(j &gt; left)</div><div class="line">        quickSort(nums, left, j);</div><div class="line">    </div><div class="line">    <span class="keyword">if</span>(i &lt; right)</div><div class="line">        quickSort(nums, i, right);</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>注意，在方法二中，从right往左遍历的时候，不能考虑 <code>nums[j] == key</code> 的情况，否则有可能会出现数组左边都是大于 <code>key</code> 右边都是等于 <code>key</code> 的情况，这时排序就无法继续进行。  </p>
+<h3 id="归并排序-Merge-Sort"><a href="#归并排序-Merge-Sort" class="headerlink" title="归并排序(Merge Sort)"></a>归并排序(Merge Sort)</h3><p><strong>时间复杂度:</strong> 平均: O(NlogN)  最优: O(NlogN)  最差: O(NlogN)<br><strong>空间复杂度:</strong> O(N)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">mergeSort</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> left, <span class="keyword">int</span> right)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span>(left &gt;= right) <span class="keyword">return</span>;</div><div class="line"></div><div class="line">    <span class="keyword">int</span> mid = (right - left) / <span class="number">2</span> + left;</div><div class="line">    mergeSort(nums, left, mid);</div><div class="line">    mergeSort(nums, mid + <span class="number">1</span>, right);</div><div class="line"></div><div class="line">    mergeArray(nums, left, mid, right);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">mergeArray</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> start, <span class="keyword">int</span> mid, <span class="keyword">int</span> end)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> i = start, j = mid + <span class="number">1</span>, index = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span>[] temp = <span class="keyword">new</span> <span class="keyword">int</span>[end - start + <span class="number">1</span>];</div><div class="line">    <span class="keyword">while</span>(i &lt;= mid &amp;&amp; j &lt;= end) &#123;</div><div class="line">        <span class="keyword">if</span>(nums[i] &lt; nums[j])</div><div class="line">            temp[index++] = nums[i++];</div><div class="line">        <span class="keyword">else</span></div><div class="line">            temp[index++] = nums[j++];</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">while</span>(i &lt;= mid)</div><div class="line">        temp[index++] = nums[i++];</div><div class="line"></div><div class="line">    <span class="keyword">while</span>(j &lt;= end)</div><div class="line">        temp[index++] = nums[j++];</div><div class="line"></div><div class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> x = <span class="number">0</span>; x &lt; index; x++)</div><div class="line">        nums[x + start] = temp[x];</div><div class="line">&#125;</div></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;排序是在学习算法和编程中最基础的一部分，而快速排序和归并排序又是这其中使用最普遍的两种排序方式，具体两种排序的实现原理网上有大量的讲解，这里只记录一些具体的代码实现，方便自己忘记的时候进行查阅。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="技术" scheme="https://zhiqinl.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="leetcode" scheme="https://zhiqinl.github.io/tags/leetcode/"/>
+    
+      <category term="sort" scheme="https://zhiqinl.github.io/tags/sort/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>KMP字符串匹配算法</title>
+    <link href="https://zhiqinl.github.io/2017/08/13/kmp-algorithm/"/>
+    <id>https://zhiqinl.github.io/2017/08/13/kmp-algorithm/</id>
+    <published>2017-08-14T00:30:38.000Z</published>
+    <updated>2017-08-15T08:03:08.000Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="字符串匹配"><a href="#字符串匹配" class="headerlink" title="字符串匹配"></a>字符串匹配</h3><p>字符串匹配是算法题中常考的一个类型，而且通常会在更复杂的题目中和其他类型的问题搭配出现。<br>举例来说，有一个字符串”BBC ABCDAB ABCDABCDABDE”，来检测这其中是否含有另一个字符串”ABCDABD”就是字符串的匹配问题。</p>
+<h4 id="Brust-Force"><a href="#Brust-Force" class="headerlink" title="Brust Force"></a>Brust Force</h4><p><strong>原字符串:</strong>   “BBC ABCDAB ABCDABCDABDE” 长度: m<br><strong>匹配字符串:</strong> “ABCDABD”                 长度: n<br><strong>时间复杂度为:</strong> O(mn)<br>假设原字符串和匹配字符串的长度分别为m和n，暴力解法brust force通常是从第一个字符开始检测，如果遇到不匹配，则将用于匹配的字符向后移动一位，再继续从头开始匹配，直到找到完全匹配的位置或遍历完整个字符串，时间复杂度为mn。</p>
+<a id="more"></a>
+<h4 id="KMP"><a href="#KMP" class="headerlink" title="KMP"></a>KMP</h4><p><strong>原字符串:</strong>   “BBC ABCDAB ABCDABCDABDE” 长度: m<br><strong>匹配字符串:</strong> “ABCDABD”                 长度: n<br><strong>时间复杂度为:</strong> O(m + n)<br>与暴力解法不同，KMP在遇到不匹配的部位时，不是直接向后移动一位，而是根据一个部分匹配值表，来确定移动的位置，具体算法步骤如下:  </p>
+<h5 id="具体步骤"><a href="#具体步骤" class="headerlink" title="具体步骤"></a>具体步骤</h5><p>1.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line">|</div><div class="line">ABCDABD</div></pre></td></tr></table></figure></p>
+<p>首先，字符串”BBC ABCDAB ABCDABCDABDE”的第一个字符与搜索词”ABCDABD”的第一个字符，进行比较。因为B与A不匹配，所以搜索词后移一位。  </p>
+<p>2.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line"> |</div><div class="line"> ABCDABD</div></pre></td></tr></table></figure></p>
+<p>因为B与A不匹配，搜索词再往后移。</p>
+<p>3.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line">    |</div><div class="line">    ABCDABD</div></pre></td></tr></table></figure></p>
+<p>就这样，直到字符串有一个字符，与搜索词的第一个字符相同为止。</p>
+<p>4.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line">     |</div><div class="line">    ABCDABD</div></pre></td></tr></table></figure></p>
+<p>接着比较字符串和搜索词的下一个字符，还是相同。</p>
+<p>5.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line">          |</div><div class="line">    ABCDABD</div></pre></td></tr></table></figure></p>
+<p>直到字符串有一个字符，与搜索词对应的字符不相同为止。<br>一个基本事实是，当空格与D不匹配时，你其实知道前面六个字符是”ABCDAB”。KMP算法的想法是，设法利用这个已知信息，不要把”搜索位置”移回已经比较过的位置，继续把它向后移，这样就提高了效率。</p>
+<p>6.<br>上诉所说的已知信息指的就是部分匹配值:  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">搜索词</th>
+<th style="text-align:center">A</th>
+<th style="text-align:center">B</th>
+<th style="text-align:center">C</th>
+<th style="text-align:center">D</th>
+<th style="text-align:center">A</th>
+<th style="text-align:center">B</th>
+<th style="text-align:center">D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">部分匹配值</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">0</td>
+</tr>
+</tbody>
+</table>
+<p>部分匹配值具体如何计算下面会讲到。</p>
+<p>7.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line">          |</div><div class="line">    ABCDABD</div></pre></td></tr></table></figure></p>
+<p>当空格与D不匹配时，查表可以最后一个匹配字符B对应的部分匹配值为2，因此可以按照下面的公式计算出匹配字符串应该向后移动的位数:<br><code>移动位数 = 已匹配字符数 - 对应的部分匹配值</code><br>因此在这个例子里，应该讲匹配字符串向后移动 <code>6 - 2 = 4</code> 位。</p>
+<p>8.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line">          |</div><div class="line">        ABCDABD</div></pre></td></tr></table></figure></p>
+<p>因为空格与Ｃ不匹配，搜索词还要继续往后移。这时，已匹配的字符数为2（”AB”），对应的”部分匹配值”为0。所以，移动位数 = 2 - 0，结果为 2，于是将搜索词向后移2位。</p>
+<p>9.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line">          |</div><div class="line">          ABCDABD</div></pre></td></tr></table></figure></p>
+<p>因为空格与A不匹配，继续后移一位。</p>
+<p>10.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line">                 |</div><div class="line">           ABCDABD</div></pre></td></tr></table></figure></p>
+<p>逐位比较，直到发现C与D不匹配。于是，移动位数 = 6 - 2，继续将搜索词向后移动4位。</p>
+<p>11.<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">BBC ABCDAB ABCDABCDABDE</div><div class="line"></div><div class="line">               ABCDABD</div></pre></td></tr></table></figure></p>
+<p>逐位比较，直到搜索词的最后一位，发现完全匹配，于是搜索完成。如果还要继续搜索（即找出全部匹配），移动位数 = 7 - 0，再将搜索词向后移动7位，这里就不再重复了。</p>
+<h5 id="部分匹配值"><a href="#部分匹配值" class="headerlink" title="部分匹配值"></a>部分匹配值</h5><table>
+<thead>
+<tr>
+<th style="text-align:left">搜索词</th>
+<th style="text-align:center">A</th>
+<th style="text-align:center">B</th>
+<th style="text-align:center">C</th>
+<th style="text-align:center">D</th>
+<th style="text-align:center">A</th>
+<th style="text-align:center">B</th>
+<th style="text-align:center">D</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">部分匹配值</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">0</td>
+</tr>
+</tbody>
+</table>
+<p><code>部分匹配值</code> 就是 <code>前缀</code> 和 <code>后缀</code> 的最长的共有元素的长度。以”ABCDABD”为例，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&quot;A&quot; 的前缀和后缀都为空集，共有元素的长度为0；</div><div class="line">&quot;AB&quot; 的前缀为[A]，后缀为[B]，共有元素的长度为0；</div><div class="line">&quot;ABC&quot; 的前缀为[A, AB]，后缀为[BC, C]，共有元素的长度0；</div><div class="line">&quot;ABCD&quot; 的前缀为[A, AB, ABC]，后缀为[BCD, CD, D]，共有元素的长度为0；</div><div class="line">&quot;ABCDA&quot; 的前缀为[A, AB, ABC, ABCD]，后缀为[BCDA, CDA, DA, A]，共有元素为&quot;A&quot;，长度为1；</div><div class="line">&quot;ABCDAB&quot; 的前缀为[A, AB, ABC, ABCD, ABCDA]，后缀为[BCDAB, CDAB, DAB, AB, B]，共有元素为&quot;AB&quot;，长度为2；</div><div class="line">&quot;ABCDABD&quot; 的前缀为[A, AB, ABC, ABCD, ABCDA, ABCDAB]，后缀为[BCDABD, CDABD, DABD, ABD, BD, D]，共有元素的长度为0。</div></pre></td></tr></table></figure>
+<h5 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h5><p>Leetcode 28题问题描述:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Returns the index of the first occurrence of needle in haystack, or -1 if needle </div><div class="line">is not part of haystack.</div></pre></td></tr></table></figure>
+<ul>
+<li>部分匹配值的算法实现：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">int</span>[] generateNext(String needle) &#123;</div><div class="line">    <span class="keyword">int</span>[] next = <span class="keyword">new</span> <span class="keyword">int</span>[needle.length()];</div><div class="line">    <span class="keyword">char</span>[] chs = needle.toCharArray();</div><div class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">1</span>;</div><div class="line">    <span class="keyword">while</span>(j &lt; chs.length) &#123;</div><div class="line">        <span class="keyword">if</span>(chs[i] == chs[j]) &#123;</div><div class="line">            next[j] = i + <span class="number">1</span>;</div><div class="line">            i++;</div><div class="line">            j++;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">if</span>(i == <span class="number">0</span>) &#123;</div><div class="line">                next[j] = <span class="number">0</span>;</div><div class="line">                j++;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                i = next[i - <span class="number">1</span>];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> next;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>给定一个字符串，通过以上代码可以得出该字符串相应的部分匹配值数组 <code>next</code>。</p>
+<ul>
+<li>字符串匹配</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span>(haystack.length() &lt; needle.length()) <span class="keyword">return</span> -<span class="number">1</span>;</div><div class="line">    </div><div class="line">    <span class="keyword">int</span> i = <span class="number">0</span>, j = <span class="number">0</span>;</div><div class="line">    <span class="keyword">int</span>[] next = generateNext(needle);</div><div class="line">    <span class="keyword">char</span>[] h_chs = haystack.toCharArray(), n_chs = needle.toCharArray();</div><div class="line">    <span class="keyword">while</span>(i &lt; h_chs.length &amp;&amp; j &lt; n_chs.length) &#123;</div><div class="line">        <span class="keyword">if</span>(h_chs[i] == n_chs[j]) &#123;</div><div class="line">            i++;</div><div class="line">            j++;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">if</span>(j == <span class="number">0</span>) &#123;</div><div class="line">                i++;</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                j = next[j - <span class="number">1</span>];</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> j == n_chs.length? i - n_chs.length : -<span class="number">1</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>根据之前计算出的部分匹配值数组 <code>next</code>，可以通过如上代码计算出匹配字符串 <code>needle</code> 在原字符串 <code>haystack</code> 中相应的匹配位置。</p>
+<h4 id="相关Leetcode题目"><a href="#相关Leetcode题目" class="headerlink" title="相关Leetcode题目"></a>相关Leetcode题目</h4><p><a href="https://leetcode.com/problems/implement-strstr/description/" target="_blank" rel="external">Leetcode: 28. Implement strStr()</a><br><a href="https://leetcode.com/problems/repeated-substring-pattern/description/" target="_blank" rel="external">Leetcode: 459. Repeated Substring Pattern</a></p>
+<h3 id="相关参考"><a href="#相关参考" class="headerlink" title="相关参考"></a>相关参考</h3><blockquote>
+<ul>
+<li><a href="http://kb.cnblogs.com/page/176818/" target="_blank" rel="external">字符串匹配的KMP算法</a></li>
+</ul>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;字符串匹配&quot;&gt;&lt;a href=&quot;#字符串匹配&quot; class=&quot;headerlink&quot; title=&quot;字符串匹配&quot;&gt;&lt;/a&gt;字符串匹配&lt;/h3&gt;&lt;p&gt;字符串匹配是算法题中常考的一个类型，而且通常会在更复杂的题目中和其他类型的问题搭配出现。&lt;br&gt;举例来说，有一个字符串”BBC ABCDAB ABCDABCDABDE”，来检测这其中是否含有另一个字符串”ABCDABD”就是字符串的匹配问题。&lt;/p&gt;
+&lt;h4 id=&quot;Brust-Force&quot;&gt;&lt;a href=&quot;#Brust-Force&quot; class=&quot;headerlink&quot; title=&quot;Brust Force&quot;&gt;&lt;/a&gt;Brust Force&lt;/h4&gt;&lt;p&gt;&lt;strong&gt;原字符串:&lt;/strong&gt;   “BBC ABCDAB ABCDABCDABDE” 长度: m&lt;br&gt;&lt;strong&gt;匹配字符串:&lt;/strong&gt; “ABCDABD”                 长度: n&lt;br&gt;&lt;strong&gt;时间复杂度为:&lt;/strong&gt; O(mn)&lt;br&gt;假设原字符串和匹配字符串的长度分别为m和n，暴力解法brust force通常是从第一个字符开始检测，如果遇到不匹配，则将用于匹配的字符向后移动一位，再继续从头开始匹配，直到找到完全匹配的位置或遍历完整个字符串，时间复杂度为mn。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="技术" scheme="https://zhiqinl.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="kmp" scheme="https://zhiqinl.github.io/tags/kmp/"/>
+    
+      <category term="leetcode" scheme="https://zhiqinl.github.io/tags/leetcode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>记一次Macbook Pro的换屏经历</title>
+    <link href="https://zhiqinl.github.io/2017/07/31/replace-screen/"/>
+    <id>https://zhiqinl.github.io/2017/07/31/replace-screen/</id>
+    <published>2017-07-31T22:45:40.000Z</published>
+    <updated>2017-07-31T09:18:46.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="换屏动机"><a href="#换屏动机" class="headerlink" title="换屏动机"></a>换屏动机</h2><p>用Macbook Pro的小伙伴们肯定或多或少的都听说过Macbook retain屏幕的镀膜图层脱落的问题，本人手中的15寸的pro小老婆也无可避免的遇到了这个问题，一小片一小片脱落的图层在整个屏幕上显得十分的丑陋并且影响观感，然而我实在是懒得不行一直不愿意去管，直到最近开始发现已经有点影响到正常的屏幕显示了，实在受不了了就Google了一下这个问题，发现在国内竟然也可以免费换屏，那这就没啥说的了，果断换之。</p>
+<p>PS. 根据店员的说法，每一个购买了Macbook的用户，如果出现了屏幕上镀层脱落的问题，不管严重与否，都是可以进行一次免费换屏的服务的，我自己的屏幕除了镀膜脱落的问题外，也有错位的问题，但是也无偿享受了免费的换屏服务，所以也有同样问题的小伙伴，都可以考虑去换一个新的屏幕。</p>
+<a id="more"></a>
+<h2 id="事前预约"><a href="#事前预约" class="headerlink" title="事前预约"></a>事前预约</h2><p>某天本人打电话给苹果的售后 <code>400-666-8800</code> 询问了一下具体苹果关于处理镀层脱落的政策，确认了可以无偿的免费换屏，但是对于具体不同的维修点或者直营店，可能会存在不同的服务费，这个需要具体看直营店或者维修点的情况，接下来就是要去预约维修点或直营店和具体的时间了。预约可以打电话给客服直接在电话里让他帮你预约，也可以登陆apple的官网自己手动预约，本着自己的事情自己做的原则，我当然是在官网自己预约的，具体流程如下:</p>
+<p>首先登陆Apple的中国官网，并点击进入 <code>技术支持</code>:<br><img src="/uploads/replace_screen/pic1.png" alt=""></p>
+<p>之后再页面中下滑，找到 ”您需要哪方面帮助？“ 并点击 <code>获得支持</code> 按钮:<br><img src="/uploads/replace_screen/pic2.png" alt=""></p>
+<p>之后选择自己的设备，因为是电脑换屏，所以我这里选择的是 <code>Mac</code>:<br><img src="/uploads/replace_screen/pic3.png" alt=""></p>
+<p>然后会出现如下图的选项来选择需要处理哪部分的问题，这里我选择 <code>Hardware Issues</code>:<br><img src="/uploads/replace_screen/pic4.png" alt=""></p>
+<p>最后选择 <code>Bring in for Repair</code> 然后用自己的apple ID登陆，就可以选择直营店和时间进行预约了:<br><img src="/uploads/replace_screen/pic5.png" alt=""></p>
+<p>预约维修需要提供本人的身份证，所以到店维修和取的时候都需要记得带上自己的身份证，我去去电脑的时候就见到一个人帮他老婆取修的手机，带了老婆的身份证没带自己的身份证店员不让她取的尴尬事情。</p>
+<p>PS.可以维修苹果设备的地方分为直营店和苹果的授权维修点两种，顾名思义前一种是Apple直接开设管理的集销售，维修，售后为一身的店铺，通常开设在大城市的商业中心，后一种说的难听点就是普通的修电脑的电脑城，只不过拿到了苹果的授权可以专业的来维修苹果的设备。我这里建议，对于比较严重的或者说需要给设备更换零件的问题，还是去苹果的直营店比较保险，随便Google一下可以看到很多授权维修点坑客户的事件，所以为了自己设备的安全，这里建议大家去苹果直营店比较保险。</p>
+<h2 id="到店维修"><a href="#到店维修" class="headerlink" title="到店维修"></a>到店维修</h2><p>预约成功后，提前预约的时间10分钟左右到店找到专门负责售后的店员，店员会安排专门的工程师来处理用户的问题。我预约的是北京王府井的Apple store apm店，不得不说，周末再加上是王府井，当天下午的人可真的是不少。工程师见到我的电脑，感慨了一下从来没见过像我这样图层脱落的情况，然后测试了一下电脑的其他性能(电池，硬盘，CPU)什么的，就安排免费的屏幕更换了，连服务费都免了！这里我要点10个赞！然后打了一张维修单，等着短信，电话或者邮件通知再来凭维修单和身份证取机器就行了。</p>
+<h2 id="换屏完成"><a href="#换屏完成" class="headerlink" title="换屏完成"></a>换屏完成</h2><p>苹果的售后维修一般是48小时之内完成的，由于我周一要用电脑，就给加急了，当天晚上10点接到工程师的电话(看来当苹果的硬件工程师也得加班到很晚)，说是屏幕换完了，还顺便帮清了个灰让第二天去取。第二天一早就爬起来又跑到王府井去取电脑(住在西二旗连续两天花3个小时往返王府井也是累的不行)，拿到电脑看到换好屏幕的pro小老婆，对比之前那块脏兮兮的屏幕，感觉自己处女座强迫症被极大的满足了，又可以继续愉快的敲代码了！</p>
+<p>来晒一下换好屏幕的以后的效果:<br><img src="/uploads/replace_screen/pic6.png" alt=""></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;换屏动机&quot;&gt;&lt;a href=&quot;#换屏动机&quot; class=&quot;headerlink&quot; title=&quot;换屏动机&quot;&gt;&lt;/a&gt;换屏动机&lt;/h2&gt;&lt;p&gt;用Macbook Pro的小伙伴们肯定或多或少的都听说过Macbook retain屏幕的镀膜图层脱落的问题，本人手中的15寸的pro小老婆也无可避免的遇到了这个问题，一小片一小片脱落的图层在整个屏幕上显得十分的丑陋并且影响观感，然而我实在是懒得不行一直不愿意去管，直到最近开始发现已经有点影响到正常的屏幕显示了，实在受不了了就Google了一下这个问题，发现在国内竟然也可以免费换屏，那这就没啥说的了，果断换之。&lt;/p&gt;
+&lt;p&gt;PS. 根据店员的说法，每一个购买了Macbook的用户，如果出现了屏幕上镀层脱落的问题，不管严重与否，都是可以进行一次免费换屏的服务的，我自己的屏幕除了镀膜脱落的问题外，也有错位的问题，但是也无偿享受了免费的换屏服务，所以也有同样问题的小伙伴，都可以考虑去换一个新的屏幕。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="生活" scheme="https://zhiqinl.github.io/categories/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="搞机" scheme="https://zhiqinl.github.io/tags/%E6%90%9E%E6%9C%BA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Markdown语法小记</title>
+    <link href="https://zhiqinl.github.io/2017/07/25/markdown-record/"/>
+    <id>https://zhiqinl.github.io/2017/07/25/markdown-record/</id>
+    <published>2017-07-25T22:49:05.000Z</published>
+    <updated>2017-07-25T13:49:15.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>在真正写博客之前虽有对Markdown有所了解，但是从来没有仔细学习过它的各种语法，仔细想想刚开始部署GitHub的时候，还对readme的md后缀懵逼过，十分的惭愧，所以现在准备好好记录一下.</p>
+<h2 id="基础语法"><a href="#基础语法" class="headerlink" title="基础语法"></a>基础语法</h2><h3 id="文字标题"><a href="#文字标题" class="headerlink" title="文字标题"></a>文字标题</h3><p>Markdonw中有两种定义标题的方式，第一种是利用 <code>=</code> (最高阶标题) 和<code>-</code> (第二阶标题)在文字下方加入底线的形式，第二种是在行首加入1到6个 <code>#</code>，对应标题从第一阶到第六阶.</p>
+<a id="more"></a>
+<h4 id="加底线的标题"><a href="#加底线的标题" class="headerlink" title="加底线的标题"></a>加底线的标题</h4><p>最高阶标题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">这是最高阶标题	</div><div class="line">============</div></pre></td></tr></table></figure>
+<p>第二阶标题</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">这是第二阶标题</div><div class="line">------------</div></pre></td></tr></table></figure>
+<h4 id="加-的标题"><a href="#加-的标题" class="headerlink" title="加 # 的标题"></a>加 <code>#</code> 的标题</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># 这是一阶标题</div><div class="line"></div><div class="line">###### 这是六阶标题</div></pre></td></tr></table></figure>
+<h3 id="换行与分割线"><a href="#换行与分割线" class="headerlink" title="换行与分割线"></a>换行与分割线</h3><h4 id="换行"><a href="#换行" class="headerlink" title="换行"></a>换行</h4><p>刚开始使用Markdown时，很多小伙伴可能会对换行有一些迷惑(其实就是我自己)，每次都要在两行之间空一行，但其实Markdown的换行只需要在上一行的末尾加上两个空格，再回车，就能够换行了.  </p>
+<h4 id="分隔线"><a href="#分隔线" class="headerlink" title="分隔线"></a>分隔线</h4><p>Markdown中可以使用 <code>***</code> 或者 <code>---</code>来产生分隔线，效果如下:</p>
+<hr>
+<p>注意，因为 <code>---</code> 也可以用来产生二级标题，所以，用 <code>---</code> 产生分隔线时，需要与上一行文字隔一行.</p>
+<h3 id="加粗与斜体"><a href="#加粗与斜体" class="headerlink" title="加粗与斜体"></a>加粗与斜体</h3><p>Markdown中实现文字的加粗与斜体也是非常的简单，用两个 <code>*</code> 包裹文字就能实现<strong>加粗</strong>，用一个 <code>*</code> 包裹文字，就能实现<em>斜体</em>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">**这里会加粗**</div><div class="line"></div><div class="line">*这里会斜体*</div></pre></td></tr></table></figure>
+<h3 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h3><p>Markdown中无序列表可以通过在文字前加上 <code>*</code> <code>-</code> 或 <code>+</code> 中任意一个和空格实现，在文字前加上数字，点和空格(例如<code>1.</code>)就能实现有序列表.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">* 无序列表1</div><div class="line">- 无序列表2</div><div class="line">+ 无序列表3</div><div class="line"></div><div class="line">1. 有序列表1</div><div class="line">2. 有序列表2</div></pre></td></tr></table></figure>
+<h3 id="图片与链接"><a href="#图片与链接" class="headerlink" title="图片与链接"></a>图片与链接</h3><p>都需要加入URL的图片和链接在Markdown中的实现方式比较类似:</p>
+<h4 id="图片"><a href="#图片" class="headerlink" title="图片:"></a>图片:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">![Alt text](/path/to/img.jpg)</div><div class="line">or</div><div class="line">![Alt text](/path/to/img.jpg &quot;Optional title&quot;)</div></pre></td></tr></table></figure>
+<p>方括号 <code>[]</code> 中为图片加载不出来时的替代文字，<code>()</code> 中第一项为图片的地址，第二项可选择性的加或者不加，其内容是图片的title.</p>
+<h4 id="链接"><a href="#链接" class="headerlink" title="链接:"></a>链接:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[text](/path/to/page)</div></pre></td></tr></table></figure>
+<p><code>[]</code> 中放入链接文字，<code>()</code>中则为具体的url.</p>
+<h3 id="表格"><a href="#表格" class="headerlink" title="表格"></a>表格</h3><p>表格的格式如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">| col1       | col2       | col3       |</div><div class="line">| :--------- |:----------:| ----------:|</div><div class="line">| row1 col1  | row1 col2  | row1 col3  |</div><div class="line">| row2 col1  | row2 col2  | row2 col3  |</div><div class="line">| row3 col1  | row3 col2  | row3 col3  |</div></pre></td></tr></table></figure>
+<p>效果则为:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">col1</th>
+<th style="text-align:center">col2</th>
+<th style="text-align:right">col3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">row1 col1</td>
+<td style="text-align:center">row1 col2</td>
+<td style="text-align:right">row1 col3</td>
+</tr>
+<tr>
+<td style="text-align:left">row2 col1</td>
+<td style="text-align:center">row2 col2</td>
+<td style="text-align:right">row2 col3</td>
+</tr>
+<tr>
+<td style="text-align:left">row3 col1</td>
+<td style="text-align:center">row3 col2</td>
+<td style="text-align:right">row3 col3</td>
+</tr>
+</tbody>
+</table>
+<h3 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h3><p>在文字前加上 <code>&gt;</code> 即可加入一段引用</p>
+<blockquote>
+<p>这是一段引用  </p>
+</blockquote>
+<p>如果需要加入很多行引用，则需要在每行前都加上 <code>&gt;</code></p>
+<blockquote>
+<p>这是<br>多行<br>引用</p>
+</blockquote>
+<h3 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h3><p>对于程序员来说，如何优雅在文本中加入代码块是一件很重(zhuang)要(B)的事情，在Markdown中加入代码块有多种方式:  </p>
+<ul>
+<li>缩进4个空格或者1个制表符(tab键)  </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">前面加四个空格或者一个tab就可以形成代码块</div></pre></td></tr></table></figure>
+<p>在列表行下使用此种方法时则需要缩进两次，所以为了使用方便和文字的区域性更加明显，不是很推荐这种方法来产生代码块.</p>
+<ul>
+<li>单行的代码用两个 <code>` </code> 符号包裹</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">`被包裹的单行代码块`</div></pre></td></tr></table></figure>
+<ul>
+<li>多行的代码则用分别用三个 <code>` </code> 将整段代码包裹，同时用此种方法加上不同的语言名字还可以为不同的程序语言设置不同的代码高亮，完美的解决了程序员的这一刚性需求</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">\``` python</div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">function</span><span class="params">()</span>:</span></div><div class="line">	print(<span class="string">'这里是多行代码'</span>)</div><div class="line">\```</div></pre></td></tr></table></figure>
+<p>(因为是特殊符号，所以在展示时加入了一个 \ 取消符号的特殊含义方便展示，在实际使用时无需加上反斜杠)</p>
+<h2 id="其他语法"><a href="#其他语法" class="headerlink" title="其他语法"></a>其他语法</h2><h3 id="兼容HTML"><a href="#兼容HTML" class="headerlink" title="兼容HTML"></a>兼容HTML</h3><p>在Markdown中可以使用HTML的标签元素来对文字进行进一步的修改，例如Markdown中的文字大小一般是无法进行直接修改的，通过HTML标签或者直接修改CSS文件就可以做到修改Markdown文件中文字的大小颜色等属性.</p>
+<p><span style="font-size: 20px;color: red">我变大了也变红了</span></p>
+<p>代码如下:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">span</span> <span class="attr">style</span>=<span class="string">"font-size: 20px;color: red"</span>&gt;</span>我变大了也变红了<span class="tag">&lt;/<span class="name">span</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>但是这些修改违背了Markdown让文档更容易读，写和改的意愿，所以一般不建议如此书写.</p>
+<h3 id="特殊字符自动转换"><a href="#特殊字符自动转换" class="headerlink" title="特殊字符自动转换"></a>特殊字符自动转换</h3><p>在 HTML 文件中，有两个字符需要特殊处理: &lt; 和 &amp; . &lt; 符号用于起始标签，&amp; 符号则用于标记 HTML 实体，如果你只是想要显示这些字符的原型，你必须要使用实体的形式，像是 &lt; 和 &amp;.</p>
+<p>&amp; 字符尤其让网络文档编写者受折磨，如果你要打「AT&amp;T」 ，你必须要写成「AT&amp;T」。而网址中的 &amp; 字符也要转换。比如你要链接到：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://images.google.com/images?num=30&amp;q=larry+bird</div></pre></td></tr></table></figure>
+<p>你必须要把网址转换写为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://images.google.com/images?num=30&amp;amp;q=larry+bird</div></pre></td></tr></table></figure>
+<p>才能放到链接标签的 href 属性里.</p>
+<h3 id="反斜杠取消符号特殊含义"><a href="#反斜杠取消符号特殊含义" class="headerlink" title="反斜杠取消符号特殊含义"></a>反斜杠取消符号特殊含义</h3><p>Markdown 可以利用反斜杠来插入一些在语法中有其它意义的符号，例如: <code>\*我不会变斜\*</code></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><blockquote>
+<ul>
+<li><a href="http://www.jianshu.com/p/1e402922ee32" target="_blank" rel="external">Markdown——入门指南</a></li>
+<li><a href="http://wowubuntu.com/markdown/index.html#backslash" target="_blank" rel="external">Markdown 语法说明</a></li>
+</ul>
+</blockquote>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;在真正写博客之前虽有对Markdown有所了解，但是从来没有仔细学习过它的各种语法，仔细想想刚开始部署GitHub的时候，还对readme的md后缀懵逼过，十分的惭愧，所以现在准备好好记录一下.&lt;/p&gt;
+&lt;h2 id=&quot;基础语法&quot;&gt;&lt;a href=&quot;#基础语法&quot; class=&quot;headerlink&quot; title=&quot;基础语法&quot;&gt;&lt;/a&gt;基础语法&lt;/h2&gt;&lt;h3 id=&quot;文字标题&quot;&gt;&lt;a href=&quot;#文字标题&quot; class=&quot;headerlink&quot; title=&quot;文字标题&quot;&gt;&lt;/a&gt;文字标题&lt;/h3&gt;&lt;p&gt;Markdonw中有两种定义标题的方式，第一种是利用 &lt;code&gt;=&lt;/code&gt; (最高阶标题) 和&lt;code&gt;-&lt;/code&gt; (第二阶标题)在文字下方加入底线的形式，第二种是在行首加入1到6个 &lt;code&gt;#&lt;/code&gt;，对应标题从第一阶到第六阶.&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="技术" scheme="https://zhiqinl.github.io/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+    
+      <category term="markdown" scheme="https://zhiqinl.github.io/tags/markdown/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="https://zhiqinl.github.io/2017/07/23/hello-world/"/>
+    <id>https://zhiqinl.github.io/2017/07/23/hello-world/</id>
+    <published>2017-07-24T03:19:22.000Z</published>
+    <updated>2017-07-23T12:24:53.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="程序员的开场白"><a href="#程序员的开场白" class="headerlink" title="程序员的开场白"></a>程序员的开场白</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">start</span><span class="params">()</span>:</span></div><div class="line">    print(<span class="string">'Hello World'</span>)</div><div class="line"></div><div class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</div><div class="line">    start()</div></pre></td></tr></table></figure>
+<p>我的个人博客上线了，主要用于记录自己时不时的一些小想法和学习技术中遇到的一些问题.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;程序员的开场白&quot;&gt;&lt;a href=&quot;#程序员的开场白&quot; class=&quot;headerlink&quot; title=&quot;程序员的开场白&quot;&gt;&lt;/a&gt;程序员的开场白&lt;/h2&gt;&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class
+    
+    </summary>
+    
+      <category term="生活" scheme="https://zhiqinl.github.io/categories/%E7%94%9F%E6%B4%BB/"/>
+    
+    
+      <category term="随笔" scheme="https://zhiqinl.github.io/tags/%E9%9A%8F%E7%AC%94/"/>
+    
+  </entry>
+  
+</feed>
